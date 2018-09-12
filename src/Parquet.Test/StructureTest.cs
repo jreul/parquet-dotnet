@@ -24,7 +24,7 @@ namespace Parquet.Test
             new DataColumn(new DataField<string>("postcode"), new[] { "postcode" }));
          ms.Position = 0;
 
-         ms.ReadSingleRowGroupFile(out Schema readSchema, out DataColumn[] readColumns);
+         ms.ReadSingleRowGroupParquetFile(out Schema readSchema, out DataColumn[] readColumns);
 
          Assert.Equal("Ivan", readColumns[0].Data.GetValue(0));
          Assert.Equal("woods", readColumns[1].Data.GetValue(0));

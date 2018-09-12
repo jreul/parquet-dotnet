@@ -49,7 +49,8 @@ namespace Parquet
       }
 
       /// <summary>
-      /// 
+      /// Writes next data column to parquet stream. Note that columns must be written in the order they are declared in the
+      /// file schema.
       /// </summary>
       /// <param name="column"></param>
       public void WriteColumn(DataColumn column)

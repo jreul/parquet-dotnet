@@ -58,7 +58,7 @@ namespace Parquet.Data
       }
 
       /// <summary>
-      /// Column data
+      /// Column data where definition levels are already applied
       /// </summary>
       public Array Data { get; private set; }
 

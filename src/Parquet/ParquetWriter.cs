@@ -68,6 +68,16 @@ namespace Parquet
       }
 
       /// <summary>
+      /// Old signature
+      /// </summary>
+      /// <param name="rowCount"></param>
+      /// <returns></returns>
+      public ParquetRowGroupWriter CreateRowGroup(int rowCount)
+      {
+         return CreateRowGroup();
+      }
+
+      /// <summary>
       /// Creates a new row group and a writer for it.
       /// </summary>
       public ParquetRowGroupWriter CreateRowGroup()

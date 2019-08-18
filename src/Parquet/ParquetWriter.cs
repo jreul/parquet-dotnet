@@ -27,6 +27,28 @@ namespace Parquet
       /// <summary>
       /// Creates an instance of parquet writer on top of a stream
       /// </summary>
+      /// <param name="schemaName">Schema root name</param>
+      /// <param name="schema"></param>
+      /// <param name="output">Writeable, seekable stream</param>
+      /// <param name="formatOptions">Additional options</param>
+      /// <param name="append"></param>
+      /// <exception cref="ArgumentNullException">Output is null.</exception>
+      /// <exception cref="ArgumentException">Output stream is not writeable</exception>
+      public ParquetWriter(string schemaName, Schema schema, Stream output, ParquetOptions formatOptions = null, bool append = false)
+         : base(new GapStream(output))
+      {
+         if (output == null) throw new ArgumentNullException(nameof(output));
+
+         if (!output.CanWrite) throw new ArgumentException("stream is not writeable", nameof(output));
+         _schema = schema ?? throw new ArgumentNullException(nameof(schema));
+         _formatOptions = formatOptions ?? new ParquetOptions();
+
+         PrepareFile(schemaName, append);
+      }
+
+      /// <summary>
+      /// Creates an instance of parquet writer on top of a stream
+      /// </summary>
       /// <param name="schema"></param>
       /// <param name="output">Writeable, seekable stream</param>
       /// <param name="formatOptions">Additional options</param>
@@ -42,7 +64,7 @@ namespace Parquet
          _schema = schema ?? throw new ArgumentNullException(nameof(schema));
          _formatOptions = formatOptions ?? new ParquetOptions();
 
-         PrepareFile(append);
+         PrepareFile(@"ParquetDotNet", append);
       }
 
       /// <summary>
@@ -59,7 +81,7 @@ namespace Parquet
          return writer;
       }
 
-      private void PrepareFile(bool append)
+      private void PrepareFile(string schemaName, bool append)
       {
          if (append)
          {
@@ -78,7 +100,7 @@ namespace Parquet
          {
             if (_footer == null)
             {
-               _footer = new ThriftFooter(_schema, 0 /* todo: don't forget to set the total row count at the end!!! */);
+               _footer = new ThriftFooter(_schema, 0, schemaName);
 
                //file starts with magic
                WriteMagic();

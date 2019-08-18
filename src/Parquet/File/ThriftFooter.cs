@@ -17,14 +17,14 @@ namespace Parquet.File
          _fileMeta = fileMeta ?? throw new ArgumentNullException(nameof(fileMeta));
       }
 
-      public ThriftFooter(Schema schema, long totalRowCount)
+      public ThriftFooter(Schema schema, long totalRowCount, string schemaName)
       {
          if (schema == null)
          {
             throw new ArgumentNullException(nameof(schema));
          }
 
-         _fileMeta = CreateThriftSchema(schema);
+         _fileMeta = CreateThriftSchema(schema, schemaName);
          _fileMeta.Num_rows = totalRowCount;
 
          _fileMeta.Created_by = $"Parquet.Net version %Version% (build %Git.LongCommitHash%)";
@@ -240,21 +240,21 @@ namespace Parquet.File
 
       #region [ Convertion from Model Schema ]
 
-      public Thrift.FileMetaData CreateThriftSchema(Schema schema)
+      public Thrift.FileMetaData CreateThriftSchema(Schema schema, string schemaName)
       {
          var meta = new Thrift.FileMetaData();
          meta.Version = 1;
          meta.Schema = new List<Thrift.SchemaElement>();
 
-         Thrift.SchemaElement root = AddRoot(meta.Schema);
+         Thrift.SchemaElement root = AddRoot(meta.Schema, schemaName);
          CreateThriftSchema(schema.Fields, root, meta.Schema);
 
          return meta;
       }
 
-      private Thrift.SchemaElement AddRoot(IList<Thrift.SchemaElement> container)
+      private Thrift.SchemaElement AddRoot(IList<Thrift.SchemaElement> container, string schemaName)
       {
-         var root = new Thrift.SchemaElement("parquet-dotnet-schema");
+         var root = new Thrift.SchemaElement(schemaName);
          container.Add(root);
          return root;
       }
